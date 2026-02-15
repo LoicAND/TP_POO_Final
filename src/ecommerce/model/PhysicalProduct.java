@@ -1,3 +1,5 @@
+package ecommerce.model;
+
 public class PhysicalProduct extends Product {
     private final double weightKg;
 
