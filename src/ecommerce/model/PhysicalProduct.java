@@ -12,7 +12,8 @@ public class PhysicalProduct extends Product {
         return weightKg; 
     }
 
-    @Override public String getType() { 
+    @Override 
+    public String getType() { 
         return "PHYSICAL"; 
     }
 }
