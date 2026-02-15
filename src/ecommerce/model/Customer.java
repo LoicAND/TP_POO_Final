@@ -1,3 +1,4 @@
+package ecommerce.model;
 
 public class Customer {
     private final String id;

@@ -1,3 +1,5 @@
+package ecommerce.model;
+
 public abstract class Product {
     private final String id;
     private final String name;

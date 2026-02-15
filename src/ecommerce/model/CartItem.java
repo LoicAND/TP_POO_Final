@@ -1,3 +1,5 @@
+package ecommerce.model;
+
 public class CartItem {
     private final Product product;
     private final int quantity;
