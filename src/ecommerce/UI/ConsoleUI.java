@@ -19,6 +19,7 @@ public class ConsoleUI {
     private final OrderService orderService;
     private final CheckoutService checkoutService;
     private final OrderRepository repo;
+    private ShippingMethod savedShipping;
 
     public ConsoleUI(OrderService orderService, CheckoutService checkoutService, OrderRepository repo) {
         this.orderService = orderService;
@@ -82,6 +83,7 @@ public class ConsoleUI {
     private void payFlow(Scanner sc, Order order) {
         PaymentMethod method = pickPayment(sc);
         ShippingMethod shipping = pickShipping(sc);
+        savedShipping = shipping;
 
         double total = checkoutService.totalWithShipping(order, shipping);
         System.out.println("Total (articles + livraison " + shipping.name() + "): " + total + " €");
@@ -90,8 +92,11 @@ public class ConsoleUI {
     }
 
     private void shipFlow(Scanner sc, Order order) {
-        ShippingMethod shipping = pickShipping(sc);
-        checkoutService.ship(order, shipping);
+        if (savedShipping == null) {
+            System.out.println("Veuillez d'abord payer la commande.");
+            return;
+        }
+        checkoutService.ship(order, savedShipping);
         System.out.println("Status => " + order.getStatus());
     }
 
