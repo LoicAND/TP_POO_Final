@@ -12,7 +12,11 @@ import ecommerce.service.OrderService;
 import ecommerce.shipping.ExpressShipping;
 import ecommerce.shipping.ShippingMethod;
 import ecommerce.shipping.StandardShipping;
+import ecommerce.model.Product;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -27,17 +31,53 @@ public class ConsoleUI {
         this.repo = repo;
     }
 
+    private List<Product> buildCatalog() {
+        List<Product> catalog = new ArrayList<>();
+        catalog.add(ProductFactory.createPhysical("P1",  "T-shirt",        19.99,  0.3));
+        catalog.add(ProductFactory.createPhysical("P2",  "Jean slim",      39.99,  0.8));
+        catalog.add(ProductFactory.createPhysical("P3",  "Baskets",        89.99,  1.2));
+        catalog.add(ProductFactory.createPhysical("P4",  "Casquette",      14.99,  0.2));
+        catalog.add(ProductFactory.createPhysical("P5",  "Sac à dos",      49.99,  0.9));
+        catalog.add(ProductFactory.createDigital ("P6",  "E-book Java",     9.99, "https://dl.shop/ebook-java"));
+        catalog.add(ProductFactory.createDigital ("P7",  "Cours UML",      14.99, "https://dl.shop/cours-uml"));
+        catalog.add(ProductFactory.createDigital ("P8",  "Album MP3",       7.99, "https://dl.shop/album-mp3"));
+        catalog.add(ProductFactory.createDigital ("P9",  "Pack icônes",     4.99, "https://dl.shop/pack-icons"));
+        catalog.add(ProductFactory.createPhysical("P10", "Clavier mécanique", 59.99, 0.7));
+        return catalog;
+    }
+
+    private List<Customer> buildCustomers() {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("C1", "Alice",   "alice@mail.com"));
+        customers.add(new Customer("C2", "Bob",     "bob@mail.com"));
+        customers.add(new Customer("C3", "Charlie", "charlie@mail.com"));
+        customers.add(new Customer("C4", "Diana",   "diana@mail.com"));
+        customers.add(new Customer("C5", "Eve",     "eve@mail.com"));
+        return customers;
+    }
+
+    private Order generateRandomOrder(List<Product> catalog, List<Customer> customers, Random rnd, int orderNum) {
+        Customer customer = customers.get(rnd.nextInt(customers.size()));
+        Order order = new Order("O" + orderNum, customer);
+
+        int nbItems = 1 + rnd.nextInt(4);         
+        for (int i = 0; i < nbItems; i++) {
+            Product product = catalog.get(rnd.nextInt(catalog.size()));
+            int qty = 1 + rnd.nextInt(3);           
+            order.addItem(product, qty);
+        }
+        orderService.create(order);
+        return order;
+    }
+
     public void run() {
         Scanner sc = new Scanner(System.in);
+        Random rnd = new Random();
 
-        Customer customer = new Customer("C1", "Alice", "alice@mail.com");
-        var tshirt = ProductFactory.createPhysical("P1", "T-shirt", 19.99, 0.3);
-        var ebook = ProductFactory.createDigital("P2", "E-book Java", 9.99, "http://download/ebook");
-
-        Order order = new Order("O1", customer);
-        order.addItem(tshirt, 1);
-        order.addItem(ebook, 1);
-        orderService.create(order);
+        List<Product> catalog   = buildCatalog();
+        List<Customer> customers = buildCustomers();
+        int orderNum = 0;
+        Order order = null;
 
         while (true) {
             System.out.println("\n=== E-COMMERCE (DEMO SIMPLE) ===");
@@ -50,13 +90,19 @@ public class ConsoleUI {
             String choice = sc.nextLine();
 
             switch (choice) {
-                case "1": 
-                    showOrder(order);  
+                case "1":
+                    orderNum++;
+                    order = generateRandomOrder(catalog, customers, rnd, orderNum);
+                    savedShipping = null;
+                    System.out.println("\n✅ Commande pour " + order.getCustomer().getName() + " !");
+                    showOrder(order);
                     break;
-                case "2":  
+                case "2":
+                    if (order == null) { System.out.println("Veuillez d'abord afficher une commande."); break; }
                     payFlow(sc, order); 
                     break;
-                case "3":  
+                case "3":
+                    if (order == null) { System.out.println("Veuillez d'abord afficher une commande."); break; }
                     shipFlow(sc, order); 
                     break;
                 case "4": 
