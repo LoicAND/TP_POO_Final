@@ -1,3 +1,5 @@
+package ecommerce.model;
+
 public class DigitalProduct extends Product {
     private final String downloadUrl;
 

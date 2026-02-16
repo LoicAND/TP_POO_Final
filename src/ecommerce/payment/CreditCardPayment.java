@@ -1,10 +1,12 @@
 package ecommerce.payment;
 
 public class CreditCardPayment implements PaymentMethod {
-    @Override public void pay(double amount) {
+    @Override 
+    public void pay(double amount) {
         System.out.println("✅ Paiement CB effectué : " + amount + " €");
     }
-    @Override public String name() { 
+    @Override 
+    public String name() { 
         return "CB"; 
     }
 }

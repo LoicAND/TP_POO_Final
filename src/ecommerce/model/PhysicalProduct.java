@@ -1,3 +1,5 @@
+package ecommerce.model;
+
 public class PhysicalProduct extends Product {
     private final double weightKg;
 
@@ -10,7 +12,8 @@ public class PhysicalProduct extends Product {
         return weightKg; 
     }
 
-    @Override public String getType() { 
+    @Override 
+    public String getType() { 
         return "PHYSICAL"; 
     }
 }
